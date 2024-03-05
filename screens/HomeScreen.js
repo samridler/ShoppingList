@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button } from "react-native";
+import { View, TextInput, Button, StyleSheet } from "react-native";
 import ShoppingList from "../components/ShoppingList";
 import ItemModal from "../components/ItemModal";
 
@@ -45,15 +45,9 @@ const HomeScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
+    <View style={styles.container}>
       <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginBottom: 16,
-          paddingHorizontal: 8,
-        }}
+        style={styles.itemInput}
         placeholder="Enter item..."
         value={item}
         onChangeText={(text) => setItem(text)}
@@ -76,5 +70,19 @@ const HomeScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  itemInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+});
 
 export default HomeScreen;
