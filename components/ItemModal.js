@@ -10,7 +10,7 @@ const ItemModal = ({ isVisible, onSave, onRemove, onClose, item }) => {
   }, [item]);
 
   return (
-    <Modal isVisible={isVisible}>
+    <Modal isVisible={isVisible} onBackdropPress={onClose}>
       <View style={styles.modalContainer}>
         <TextInput
           style={styles.modalInput}
