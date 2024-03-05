@@ -2,7 +2,21 @@ import React, { useState, useEffect } from "react";
 import { View, TextInput, Button, StyleSheet } from "react-native";
 import Modal from "react-native-modal";
 
-const ItemModal = ({ isVisible, onSave, onRemove, onClose, item }) => {
+interface ItemModalProps {
+  isVisible: boolean;
+  onSave: (text: string) => void;
+  onRemove: () => void;
+  onClose: () => void;
+  item: { text: string } | null;
+}
+
+const ItemModal: React.FC<ItemModalProps> = ({
+  isVisible,
+  onSave,
+  onRemove,
+  onClose,
+  item,
+}) => {
   const [editedText, setEditedText] = useState("");
 
   useEffect(() => {

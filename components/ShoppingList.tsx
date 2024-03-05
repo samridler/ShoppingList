@@ -1,7 +1,17 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const ShoppingList = ({ items, onItemPress, onItemLongPress }) => {
+interface ShoppingListProps {
+  items: Item[];
+  onItemPress: (id: number) => void;
+  onItemLongPress: (id: number) => void;
+}
+
+const ShoppingList: React.FC<ShoppingListProps> = ({
+  items,
+  onItemPress,
+  onItemLongPress,
+}) => {
   return (
     <View style={styles.container}>
       {items.map((item) => (
@@ -18,11 +28,6 @@ const ShoppingList = ({ items, onItemPress, onItemLongPress }) => {
       ))}
     </View>
   );
-};
-
-const commonTextStyle = {
-  padding: 8,
-  fontSize: 16,
 };
 
 const styles = StyleSheet.create({
@@ -42,10 +47,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   itemText: {
-    ...commonTextStyle,
+    padding: 8,
+    fontSize: 16,
   },
   completedText: {
-    ...commonTextStyle,
+    padding: 8,
+    fontSize: 16,
     textDecorationLine: "line-through",
     color: "gray",
   },
