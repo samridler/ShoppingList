@@ -6,12 +6,12 @@ import ItemModal from "../components/ItemModal";
 const HomeScreen: React.FC = () => {
   const [item, setItem] = useState<string>("");
   const [items, setItems] = useState<Item[]>([]);
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item>();
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const addItem = () => {
     if (item.trim() !== "") {
-      setItems([...items, { id: Date.now(), text: item, completed: false }]);
+      setItems([...items, { id: Date.now(), text: item.trim(), completed: false }]);
       setItem("");
     }
   };
@@ -25,20 +25,19 @@ const HomeScreen: React.FC = () => {
   };
 
   const openModal = (id: number) => {
-    setSelectedItemId(id);
+    setSelectedItem(items.find(item => item.id === id));
     setModalVisible(true);
   };
 
   const saveChanges = (text: string) => {
-    const updatedItems = items.map((item) =>
-      item.id === selectedItemId ? { ...item, text } : item
-    );
-    setItems(updatedItems);
+    setItems(items.map((item) =>
+      item === selectedItem ? { ...item, text } : item
+    ));
     setModalVisible(false);
   };
 
   const removeItem = () => {
-    setItems(items.filter((item) => item.id !== selectedItemId));
+    setItems(items.filter((item) => item !== selectedItem));
     setModalVisible(false);
   };
 
@@ -64,10 +63,10 @@ const HomeScreen: React.FC = () => {
 
       <ItemModal
         isVisible={isModalVisible}
+        item={selectedItem}
         onSave={saveChanges}
         onRemove={removeItem}
         onClose={closeModal}
-        item={items.find((item) => item.id === selectedItemId)}
       />
     </View>
   );

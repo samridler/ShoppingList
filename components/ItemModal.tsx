@@ -4,18 +4,18 @@ import Modal from "react-native-modal";
 
 interface ItemModalProps {
   isVisible: boolean;
+  item: Item;
   onSave: (text: string) => void;
   onRemove: () => void;
   onClose: () => void;
-  item: { text: string } | null;
 }
 
 const ItemModal: React.FC<ItemModalProps> = ({
   isVisible,
+  item,
   onSave,
   onRemove,
   onClose,
-  item,
 }) => {
   const [editedText, setEditedText] = useState("");
 
