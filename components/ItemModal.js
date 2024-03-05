@@ -17,9 +17,11 @@ const ItemModal = ({ isVisible, onSave, onRemove, onClose, item }) => {
           value={editedText}
           onChangeText={(text) => setEditedText(text)}
         />
-        <Button title="Save" onPress={() => onSave(editedText)} />
-        <Button title="Delete" onPress={onRemove} />
-        <Button title="Cancel" onPress={onClose} />
+        <View style={styles.buttonContainer}>
+          <Button title="Save" onPress={() => onSave(editedText)} />
+          <Button title="Delete" onPress={onRemove} color="red" />
+          <Button title="Cancel" onPress={onClose} color="gray" />
+        </View>
       </View>
     </Modal>
   );
@@ -37,6 +39,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     paddingHorizontal: 8,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
 });
 
