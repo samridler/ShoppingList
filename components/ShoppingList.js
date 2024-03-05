@@ -1,14 +1,12 @@
 import React from "react";
-import { FlatList, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 const ShoppingList = ({ items, onItemPress, onItemLongPress }) => {
   return (
-    <FlatList
-      data={items}
-      keyExtractor={(item) => item.id.toString()}
-      numColumns={2}
-      renderItem={({ item }) => (
+    <View style={styles.container}>
+      {items.map((item) => (
         <TouchableOpacity
+          key={item.id}
           style={styles.listItem}
           onPress={() => onItemPress(item.id)}
           onLongPress={() => onItemLongPress(item.id)}
@@ -17,27 +15,37 @@ const ShoppingList = ({ items, onItemPress, onItemLongPress }) => {
             {item.text}
           </Text>
         </TouchableOpacity>
-      )}
-    />
+      ))}
+    </View>
   );
 };
 
+const commonTextStyle = {
+  padding: 8,
+  fontSize: 16,
+};
+
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+  },
   listItem: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    height: 50,
-    margin: 8,
+    height: 40,
+    margin: 6,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
   },
   itemText: {
-    fontSize: 16,
+    ...commonTextStyle,
   },
   completedText: {
-    fontSize: 16,
+    ...commonTextStyle,
     textDecorationLine: "line-through",
     color: "gray",
   },
