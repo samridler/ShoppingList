@@ -1,59 +1,60 @@
-// HomeScreen.tsx
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, ScrollView } from "react-native";
+import { ScrollView, TextInput, Button, StyleSheet } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import ShoppingCategory from "../components/ShoppingCategory";
 import ItemModal from "../components/ItemModal";
 
 const HomeScreen: React.FC = () => {
   const [item, setItem] = useState<string>("");
-  const [categories, setCategories] = useState<{ [key: string]: Item[] }>({});
+  const [categories, setCategories] = useState<Category[]>([
+    { id: 0, text: "Fruit and Veg", items: [] },
+    { id: 1, text: "Meat", items: [] },
+    { id: 2, text: "Dairy", items: [] },
+    { id: 3, text: "Household", items: [] },
+  ]);
   const [selectedItem, setSelectedItem] = useState<Item>();
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<Category>(
+    categories[0]
+  );
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const addItem = () => {
-    if (item.trim() !== "" && selectedCategory !== "") {
-      const updatedCategories = { ...categories };
-      const categoryItems = updatedCategories[selectedCategory] || [];
-      updatedCategories[selectedCategory] = [
-        ...categoryItems,
+    if (item.trim() !== "" && selectedCategory != null) {
+      selectedCategory.items = [
+        ...selectedCategory.items,
         { id: Date.now(), text: item.trim(), completed: false },
       ];
-      setCategories(updatedCategories);
+      setCategories([...categories]);
       setItem("");
     }
   };
 
-  const toggleItem = (categoryId: string, itemId: number) => {
-    const updatedCategories = { ...categories };
-    const categoryItems = updatedCategories[categoryId] || [];
-    updatedCategories[categoryId] = categoryItems.map((item) =>
+  const toggleItem = (category: Category, itemId: number) => {
+    category.items = category.items.map((item) =>
       item.id === itemId ? { ...item, completed: !item.completed } : item
     );
-    setCategories(updatedCategories);
+    setCategories([...categories]);
   };
 
-  const openModal = (categoryId: string, itemId: number) => {
-    setSelectedCategory(categoryId);
-    setSelectedItem(categories[categoryId].find((item) => item.id === itemId));
+  const openModal = (category: Category, itemId: number) => {
+    setSelectedCategory(category);
+    setSelectedItem(category.items.find((item) => item.id === itemId));
     setModalVisible(true);
   };
 
   const saveChanges = (text: string) => {
-    const updatedCategories = { ...categories };
-    updatedCategories[selectedCategory] = categories[selectedCategory].map(
-      (item) => (item === selectedItem ? { ...item, text } : item)
+    selectedCategory.items = selectedCategory.items.map((item) =>
+      item === selectedItem ? { ...item, text } : item
     );
-    setCategories(updatedCategories);
+    setCategories([...categories]);
     setModalVisible(false);
   };
 
   const removeItem = () => {
-    const updatedCategories = { ...categories };
-    updatedCategories[selectedCategory] = categories[selectedCategory].filter(
+    selectedCategory.items = selectedCategory.items.filter(
       (item) => item !== selectedItem
     );
-    setCategories(updatedCategories);
+    setCategories([...categories]);
     setModalVisible(false);
   };
 
@@ -69,19 +70,23 @@ const HomeScreen: React.FC = () => {
         value={item}
         onChangeText={(text) => setItem(text)}
       />
-      <TextInput
-        style={styles.itemInput}
-        placeholder="Enter category..."
+      <Dropdown
+        style={styles.categoryDropdown}
+        data={categories}
+        labelField="text"
+        valueField="id"
         value={selectedCategory}
-        onChangeText={(text) => setSelectedCategory(text)}
-      />
+        onChange={(category) => {
+          setSelectedCategory(category);
+        }}
+      ></Dropdown>
       <Button title="Add Item" onPress={addItem} />
 
-      {Object.entries(categories).map(([category, items]) => (
+      {categories.map((category) => (
         <ShoppingCategory
-          key={category}
+          key={category.id}
           category={category}
-          items={items}
+          items={category.items}
           onItemPress={(id) => toggleItem(category, id)}
           onItemLongPress={(id) => openModal(category, id)}
         />
@@ -104,6 +109,13 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   itemInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  categoryDropdown: {
     height: 40,
     borderColor: "gray",
     borderWidth: 1,

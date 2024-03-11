@@ -1,9 +1,8 @@
-// ShoppingCategory.tsx
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
 interface ShoppingCategoryProps {
-  category: string;
+  category: Category;
   items: Item[];
   onItemPress: (id: number) => void;
   onItemLongPress: (id: number) => void;
@@ -17,7 +16,7 @@ const ShoppingCategory: React.FC<ShoppingCategoryProps> = ({
 }) => {
   return (
     <View style={styles.categoryContainer}>
-      <Text style={styles.categoryHeader}>{category}</Text>
+      <Text style={styles.categoryHeader}>{category.text}</Text>
       <View style={styles.itemList}>
         {items.map((item) => (
           <TouchableOpacity
