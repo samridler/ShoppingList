@@ -1,43 +1,59 @@
+// HomeScreen.tsx
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet } from "react-native";
-import ShoppingList from "../components/ShoppingList";
+import { View, TextInput, Button, StyleSheet, ScrollView } from "react-native";
+import ShoppingCategory from "../components/ShoppingCategory";
 import ItemModal from "../components/ItemModal";
 
 const HomeScreen: React.FC = () => {
   const [item, setItem] = useState<string>("");
-  const [items, setItems] = useState<Item[]>([]);
+  const [categories, setCategories] = useState<{ [key: string]: Item[] }>({});
   const [selectedItem, setSelectedItem] = useState<Item>();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
   const addItem = () => {
-    if (item.trim() !== "") {
-      setItems([...items, { id: Date.now(), text: item.trim(), completed: false }]);
+    if (item.trim() !== "" && selectedCategory !== "") {
+      const updatedCategories = { ...categories };
+      const categoryItems = updatedCategories[selectedCategory] || [];
+      updatedCategories[selectedCategory] = [
+        ...categoryItems,
+        { id: Date.now(), text: item.trim(), completed: false },
+      ];
+      setCategories(updatedCategories);
       setItem("");
     }
   };
 
-  const toggleItem = (id: number) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, completed: !item.completed } : item
-      )
+  const toggleItem = (categoryId: string, itemId: number) => {
+    const updatedCategories = { ...categories };
+    const categoryItems = updatedCategories[categoryId] || [];
+    updatedCategories[categoryId] = categoryItems.map((item) =>
+      item.id === itemId ? { ...item, completed: !item.completed } : item
     );
+    setCategories(updatedCategories);
   };
 
-  const openModal = (id: number) => {
-    setSelectedItem(items.find(item => item.id === id));
+  const openModal = (categoryId: string, itemId: number) => {
+    setSelectedCategory(categoryId);
+    setSelectedItem(categories[categoryId].find((item) => item.id === itemId));
     setModalVisible(true);
   };
 
   const saveChanges = (text: string) => {
-    setItems(items.map((item) =>
-      item === selectedItem ? { ...item, text } : item
-    ));
+    const updatedCategories = { ...categories };
+    updatedCategories[selectedCategory] = categories[selectedCategory].map(
+      (item) => (item === selectedItem ? { ...item, text } : item)
+    );
+    setCategories(updatedCategories);
     setModalVisible(false);
   };
 
   const removeItem = () => {
-    setItems(items.filter((item) => item !== selectedItem));
+    const updatedCategories = { ...categories };
+    updatedCategories[selectedCategory] = categories[selectedCategory].filter(
+      (item) => item !== selectedItem
+    );
+    setCategories(updatedCategories);
     setModalVisible(false);
   };
 
@@ -46,20 +62,30 @@ const HomeScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <TextInput
         style={styles.itemInput}
         placeholder="Enter item..."
         value={item}
         onChangeText={(text) => setItem(text)}
       />
+      <TextInput
+        style={styles.itemInput}
+        placeholder="Enter category..."
+        value={selectedCategory}
+        onChangeText={(text) => setSelectedCategory(text)}
+      />
       <Button title="Add Item" onPress={addItem} />
 
-      <ShoppingList
-        items={items}
-        onItemPress={toggleItem}
-        onItemLongPress={openModal}
-      />
+      {Object.entries(categories).map(([category, items]) => (
+        <ShoppingCategory
+          key={category}
+          category={category}
+          items={items}
+          onItemPress={(id) => toggleItem(category, id)}
+          onItemLongPress={(id) => openModal(category, id)}
+        />
+      ))}
 
       <ItemModal
         isVisible={isModalVisible}
@@ -68,7 +94,7 @@ const HomeScreen: React.FC = () => {
         onRemove={removeItem}
         onClose={closeModal}
       />
-    </View>
+    </ScrollView>
   );
 };
 
